@@ -4,7 +4,7 @@ import(
 	"fmt"
 	"os"
 	"io"
-	"http"
+	"net/http"
 )
 
 func uploadFile(w http.ResponseWriter, r *http.Request) {
@@ -25,14 +25,15 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
     defer file.Close()
     
 	resFile, err := os.Create("./data/"+handler.Filename)
-	if err != nill {
+	if err != nil {
 		fmt.Fprintln(w, err)
 	}
     defer resFile.Close()
-    
+    if err==nil {
     io.Copy(resFile,file)
     defer resFile.Close()
     fmt.Fprintf(w, "Successfully Uploaded Original File\n")
+    }
 }
 //start server which will listen and server on pot 8083
 func startServer() {
@@ -47,24 +48,4 @@ func main() {
     
 	fmt.Println("Hello World!")
 	startServer()
-}
-
-
-
-
-
-
-
-
-
-
-
-
-//to start file-upload server that will listen and serve on 8083
-func setupRoutes() {
-
-    http.HandleFunc("/fileupload", uploadFile )
-    
-    //server is listening on port 8083
-    http.ListenAndServe(":8083", nil)
 }
